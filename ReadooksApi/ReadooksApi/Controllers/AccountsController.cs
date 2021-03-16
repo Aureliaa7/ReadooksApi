@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Readooks.BusinessLogicLayer.Services.Interfaces;
-using Readooks.BusinessLogicLayer.ViewModels;
+using Readooks.BusinessLogicLayer.Dtos;
 using System.Threading.Tasks;
 
 namespace ReadooksApi.Controllers
@@ -16,7 +16,7 @@ namespace ReadooksApi.Controllers
 
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register(UserRegistrationVm user)
+        public async Task<ActionResult> Register(UserRegistrationDto user)
         {
             var createdUser = await accountService.Register(user);
             if (createdUser != null)

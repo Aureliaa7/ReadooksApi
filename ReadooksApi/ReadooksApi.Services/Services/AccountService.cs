@@ -1,50 +1,67 @@
 ﻿using Readooks.BusinessLogicLayer.Services.Interfaces;
-using Readooks.BusinessLogicLayer.ViewModels;
+using Readooks.BusinessLogicLayer.Services.PasswordEncryption;
+using Readooks.BusinessLogicLayer.Dtos;
 using Readooks.DataAccessLayer.DomainEntities;
 using Readooks.DataAccessLayer.UnitOfWork;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace Readooks.BusinessLogicLayer.Services
 {
     public class AccountService : IAccountService
     {
         private readonly IUnitOfWork unitOfWork;
+        private readonly IPasswordEncryptionService passwordEncryptionService;
+        private readonly IMapper mapper;
 
-        public AccountService(IUnitOfWork unitOfWork)
+        public AccountService(IUnitOfWork unitOfWork, IPasswordEncryptionService passwordEncryptionService, IMapper mapper)
         {
             this.unitOfWork = unitOfWork;
+            this.passwordEncryptionService = passwordEncryptionService;
+            this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<User>> GetAll()
+        // TODO remove this method later. For now it's used only for checking the inserted users
+        public async Task<IEnumerable<UserDto>> GetAll()
         {
-            return await unitOfWork.UserRepository.GetAll();
+            var users = await unitOfWork.UserRepository.GetAll();
+            var userDtos = new List<UserDto>();
+
+            foreach(var user in users)
+            {
+                userDtos.Add(mapper.Map<UserDto>(user));
+            }
+
+            return userDtos;
         }
 
-        public Task Login(UserLoginVm userLoginVm)
+        public Task Login(UserLoginDto userLoginVm)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<User> Register(UserRegistrationVm userRegisterVm)
+        public async Task<UserDto> Register(UserRegistrationDto userRegisterDto)
         {
             User user = null;
-            bool accountExists = await AccountExists(userRegisterVm.Email);
+            bool accountExists = await AccountExists(userRegisterDto.Email);
+
             if (!accountExists)
             {
                 var newUser = new User
                 {
                     AvailableSpotsOnBookshelf = Constants.InitialNoSpotsOnBookshelf,
-                    Email = userRegisterVm.Email,
-                    FirstName = userRegisterVm.FirstName,
-                    LastName = userRegisterVm.LastName,
+                    Email = userRegisterDto.Email,
+                    FirstName = userRegisterDto.FirstName,
+                    LastName = userRegisterDto.LastName,
                     NumberOfCoins = 0,
-                    Password = userRegisterVm.Password   //TODO password should be encrypted
+                    Salt = Salt.Create()
                 };
+                newUser.Password = passwordEncryptionService.Encrypt(userRegisterDto.Password, newUser.Salt);
                 user = await unitOfWork.UserRepository.Add(newUser);
             }
-            return user;
+            return mapper.Map<UserDto>(user);
         }
 
         private async Task<bool> AccountExists(string email)

@@ -4,12 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Readooks.BusinessLogicLayer.MappingConfigurations;
 using Readooks.BusinessLogicLayer.Services;
 using Readooks.BusinessLogicLayer.Services.Interfaces;
+using Readooks.BusinessLogicLayer.Services.PasswordEncryption;
 using Readooks.DataAccessLayer.DatabaseContext;
 using Readooks.DataAccessLayer.Repositories;
 using Readooks.DataAccessLayer.Repositories.Interfaces;
 using Readooks.DataAccessLayer.UnitOfWork;
+using AutoMapper;
 
 namespace ReadooksApi
 {
@@ -34,7 +37,13 @@ namespace ReadooksApi
             //
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IAccountService, AccountService>(); services.AddControllers();
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IPasswordEncryptionService, PasswordEncryptionService>();
+
+            services.AddAutoMapper(typeof(UserProfile));
+            services.AddAutoMapper(typeof(UserRegistrationProfile));
+
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

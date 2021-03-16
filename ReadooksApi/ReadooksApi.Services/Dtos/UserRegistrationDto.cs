@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Readooks.BusinessLogicLayer.ViewModels
+namespace Readooks.BusinessLogicLayer.Dtos
 {
-    public class UserRegistrationVm
+    public class UserRegistrationDto
     {
         [Required]
         public string FirstName { get; set; }
@@ -12,6 +12,7 @@ namespace Readooks.BusinessLogicLayer.ViewModels
 
         [Required]
         public string Password { get; set; }
+
         [Required]
         public string Email { get; set; }
     }
