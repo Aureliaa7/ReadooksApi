@@ -18,25 +18,25 @@ namespace Readooks.DataAccessLayer.Repositories
             Context = context;
         }
 
-        public async Task<T> Add(T entity)
+        public async Task<T> AddAsync(T entity)
         {
             Context.Set<T>().Add(entity);
             await Context.SaveChangesAsync();
             return entity;
         }
 
-        public async Task<T> Get(Guid id)
+        public async Task<T> GetAsync(Guid id)
         {
             var searched = await Context.Set<T>().FindAsync(id);
             return searched;
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
             return await Context.Set<T>().AsNoTracking().ToListAsync();
         }
 
-        public async Task<T> Remove(Guid id)
+        public async Task<T> RemoveAsync(Guid id)
         {
             var entityToBeDeleted = await Context.Set<T>().FindAsync(id);
             if (entityToBeDeleted == null)
@@ -49,7 +49,7 @@ namespace Readooks.DataAccessLayer.Repositories
         }
 
 
-        public async Task<T> Update(T entity)
+        public async Task<T> UpdateAsync(T entity)
         {
             Context.Set<T>().Update(entity);
             await Context.SaveChangesAsync();

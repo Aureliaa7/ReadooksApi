@@ -7,11 +7,11 @@ namespace Readooks.DataAccessLayer.Repositories.Interfaces
 {
     public interface IRepository<T> where T : class
     {
-        Task<T> Add(T entity);
-        Task<T> Remove(Guid id);
-        Task<T> Update(T entity);
-        Task<T> Get(Guid id);
-        Task<IEnumerable<T>> GetAll();
+        Task<T> AddAsync(T entity);
+        Task<T> RemoveAsync(Guid id);
+        Task<T> UpdateAsync(T entity);
+        Task<T> GetAsync(Guid id);
+        Task<IEnumerable<T>> GetAllAsync();
         Task<bool> Exists(Expression<Func<T, bool>> predicate);
     }
 }

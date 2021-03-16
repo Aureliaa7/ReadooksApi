@@ -26,6 +26,16 @@ namespace ReadooksApi.Controllers
             return BadRequest();
         }
 
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(UserLoginDto model)
+        {
+            var user = await accountService.Login(model);
+            if (user != null)
+            {
+                return Ok(user);
+            }
+            return NotFound();
+        }
 
         [HttpGet("users")]
         public async Task<IActionResult> GetUsers()

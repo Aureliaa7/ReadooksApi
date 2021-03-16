@@ -6,7 +6,7 @@ namespace Readooks.BusinessLogicLayer.Services.Interfaces
 {
     public interface IAccountService
     {
-        Task Login(UserLoginDto userLoginDto);
+        Task<UserDto> Login(UserLoginDto userLoginDto);
         Task<UserDto> Register(UserRegistrationDto userRegisterDto);
         Task<IEnumerable<UserDto>> GetAll();
     }

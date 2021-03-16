@@ -9,12 +9,12 @@ namespace Readooks.DataAccessLayer.UnitOfWork
     {
         public UnitOfWork(ApplicationDbContext applicationDbContext)
         {
-            UserRepository = new Repository<User>(applicationDbContext);
+            UserRepository = new UserRepository(applicationDbContext);
             BookRepository = new BookRepository(applicationDbContext);
             ReadingSessionRepository = new ReadingSessionRepository(applicationDbContext);
         }
 
-        public IRepository<User> UserRepository { get; private set; }
+        public IUserRepository UserRepository { get; private set; }
 
         public IBookRepository BookRepository { get; private set; }
 

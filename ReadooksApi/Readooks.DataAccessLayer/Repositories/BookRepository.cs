@@ -15,7 +15,7 @@ namespace Readooks.DataAccessLayer.Repositories
         {
         }
 
-        public async Task<Book> GetWithRelatedEntities(Guid id)
+        public async Task<Book> GetWithRelatedEntitiesAsync(Guid id)
         {
             return await Context.Set<Book>()
                 .Where(x => x.Id == id)
@@ -23,7 +23,7 @@ namespace Readooks.DataAccessLayer.Repositories
                 .FirstAsync();
         }
 
-        public async Task<IEnumerable<Book>> GetWithRelatedEntitiesByUser(Guid userId)
+        public async Task<IEnumerable<Book>> GetWithRelatedEntitiesByUserAsync(Guid userId)
         {
             return await Context.Set<Book>()
                .Where(x => x.Reader.Id == userId)

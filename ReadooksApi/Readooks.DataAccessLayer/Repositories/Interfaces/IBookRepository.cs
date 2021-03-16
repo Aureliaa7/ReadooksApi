@@ -7,7 +7,7 @@ namespace Readooks.DataAccessLayer.Repositories.Interfaces
 {
     public interface IBookRepository : IRepository<Book>
     {
-        Task<Book> GetWithRelatedEntities(Guid id);
-        Task<IEnumerable<Book>> GetWithRelatedEntitiesByUser(Guid userId);
+        Task<Book> GetWithRelatedEntitiesAsync(Guid id);
+        Task<IEnumerable<Book>> GetWithRelatedEntitiesByUserAsync(Guid userId);
     }
 }

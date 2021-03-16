@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Readooks.BusinessLogicLayer.Exceptions;
 
 namespace Readooks.BusinessLogicLayer.Services
 {
@@ -26,7 +27,7 @@ namespace Readooks.BusinessLogicLayer.Services
         // TODO remove this method later. For now it's used only for checking the inserted users
         public async Task<IEnumerable<UserDto>> GetAll()
         {
-            var users = await unitOfWork.UserRepository.GetAll();
+            var users = await unitOfWork.UserRepository.GetAllAsync();
             var userDtos = new List<UserDto>();
 
             foreach(var user in users)
@@ -37,9 +38,20 @@ namespace Readooks.BusinessLogicLayer.Services
             return userDtos;
         }
 
-        public Task Login(UserLoginDto userLoginVm)
+        public async Task<UserDto> Login(UserLoginDto userLogin)
         {
-            throw new NotImplementedException();
+            UserDto userDto = null;
+            bool accountExists = await AccountExists(userLogin.Email);
+            if (accountExists)
+            {
+                var user = await unitOfWork.UserRepository.GetByEmailAsync(userLogin.Email);
+                bool passwordIsCorrect = passwordEncryptionService.PasswordIsCorrect(userLogin.Password, user.Salt, user.Password);
+                if(passwordIsCorrect)
+                {
+                    userDto = mapper.Map<UserDto>(user);
+                } 
+            }
+            return userDto;
         }
 
         public async Task<UserDto> Register(UserRegistrationDto userRegisterDto)
@@ -59,7 +71,7 @@ namespace Readooks.BusinessLogicLayer.Services
                     Salt = Salt.Create()
                 };
                 newUser.Password = passwordEncryptionService.Encrypt(userRegisterDto.Password, newUser.Salt);
-                user = await unitOfWork.UserRepository.Add(newUser);
+                user = await unitOfWork.UserRepository.AddAsync(newUser);
             }
             return mapper.Map<UserDto>(user);
         }
