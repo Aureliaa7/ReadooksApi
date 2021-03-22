@@ -56,6 +56,7 @@ namespace Readooks.BusinessLogicLayer.Services
 
         public async Task<UserDto> Register(UserRegistrationDto userRegisterDto)
         {
+            // TODO: remove the password from the response :)
             User user = null;
             bool accountExists = await AccountExists(userRegisterDto.Email);
 
