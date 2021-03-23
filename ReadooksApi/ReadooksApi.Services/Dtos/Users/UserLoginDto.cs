@@ -1,4 +1,4 @@
-﻿namespace Readooks.BusinessLogicLayer.Dtos
+﻿namespace Readooks.BusinessLogicLayer.Dtos.Users
 {
     public class UserLoginDto
     {

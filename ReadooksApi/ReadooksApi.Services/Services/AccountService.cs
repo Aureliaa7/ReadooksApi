@@ -1,13 +1,10 @@
 ﻿using Readooks.BusinessLogicLayer.Services.Interfaces;
 using Readooks.BusinessLogicLayer.Services.PasswordEncryption;
-using Readooks.BusinessLogicLayer.Dtos;
+using Readooks.BusinessLogicLayer.Dtos.Users;
 using Readooks.DataAccessLayer.DomainEntities;
 using Readooks.DataAccessLayer.UnitOfWork;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using Readooks.BusinessLogicLayer.Exceptions;
 
 namespace Readooks.BusinessLogicLayer.Services
 {
@@ -24,21 +21,7 @@ namespace Readooks.BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
-        // TODO remove this method later. For now it's used only for checking the inserted users
-        public async Task<IEnumerable<UserDto>> GetAll()
-        {
-            var users = await unitOfWork.UserRepository.GetAllAsync();
-            var userDtos = new List<UserDto>();
-
-            foreach(var user in users)
-            {
-                userDtos.Add(mapper.Map<UserDto>(user));
-            }
-
-            return userDtos;
-        }
-
-        public async Task<UserDto> Login(UserLoginDto userLogin)
+        public async Task<UserDto> LoginAsync(UserLoginDto userLogin)
         {
             UserDto userDto = null;
             bool accountExists = await AccountExists(userLogin.Email);
@@ -54,7 +37,7 @@ namespace Readooks.BusinessLogicLayer.Services
             return userDto;
         }
 
-        public async Task<UserDto> Register(UserRegistrationDto userRegisterDto)
+        public async Task<UserDto> RegisterAsync(UserRegistrationDto userRegisterDto)
         {
             User user = null;
             bool accountExists = await AccountExists(userRegisterDto.Email);

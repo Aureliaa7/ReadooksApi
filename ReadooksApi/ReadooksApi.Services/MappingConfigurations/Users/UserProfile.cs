@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Readooks.BusinessLogicLayer.Dtos;
+using Readooks.BusinessLogicLayer.Dtos.Users;
 using Readooks.DataAccessLayer.DomainEntities;
 
-namespace Readooks.BusinessLogicLayer.MappingConfigurations
+namespace Readooks.BusinessLogicLayer.MappingConfigurations.Users
 {
     public class UserProfile : Profile
     {
