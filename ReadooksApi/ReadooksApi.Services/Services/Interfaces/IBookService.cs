@@ -11,5 +11,6 @@ namespace Readooks.BusinessLogicLayer.Services.Interfaces
         Task<BookDto> GetByIdAsync(Guid id);
         Task<IEnumerable<BookDto>> GetByReaderIdAsync(Guid readerId);
         Task DeleteAsync(Guid bookId, Guid readerId);
+        Task<BookDto> UpdateAsync(Guid bookId, UpdateBookDto bookDto);
     }
 }

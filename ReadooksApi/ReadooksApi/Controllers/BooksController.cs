@@ -71,5 +71,20 @@ namespace ReadooksApi.Controllers
                 return NotFound();
             }
         }
+
+        [HttpPut("update/{bookId}")]
+        public async Task<IActionResult> Update(Guid bookId, UpdateBookDto updateBookDto)
+        {
+            try
+            {
+                var updatedBook = await bookService.UpdateAsync(bookId, updateBookDto);
+                return Ok(updatedBook);
+            }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
+            
+        }
     }
 }
