@@ -15,19 +15,10 @@ namespace Readooks.DataAccessLayer.Repositories
         {
         }
 
-        public async Task<Book> GetWithRelatedEntitiesAsync(Guid id)
+        public async Task<IEnumerable<Book>> GetByReaderIdAsync(Guid readerId)
         {
             return await Context.Set<Book>()
-                .Where(x => x.Id == id)
-                .Include(x => x.Reader)
-                .FirstAsync();
-        }
-
-        public async Task<IEnumerable<Book>> GetWithRelatedEntitiesByUserAsync(Guid userId)
-        {
-            return await Context.Set<Book>()
-               .Where(x => x.Reader.Id == userId)
-               .Include(x => x.Reader)
+               .Where(x => x.Reader.Id == readerId)
                .ToListAsync();
         }
     }
