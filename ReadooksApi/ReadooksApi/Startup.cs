@@ -13,6 +13,7 @@ using Readooks.DataAccessLayer.Repositories;
 using Readooks.DataAccessLayer.Repositories.Interfaces;
 using Readooks.DataAccessLayer.UnitOfWork;
 using Readooks.BusinessLogicLayer.MappingConfigurations.Users;
+using Readooks.BusinessLogicLayer.MappingConfigurations.ReadingSessions;
 
 namespace ReadooksApi
 {
@@ -40,11 +41,14 @@ namespace ReadooksApi
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IPasswordEncryptionService, PasswordEncryptionService>();
             services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IReadingSessionService, ReadingSessionService>();
 
             services.AddAutoMapper(typeof(UserProfile));
             services.AddAutoMapper(typeof(UserRegistrationProfile));
             services.AddAutoMapper(typeof(AddingBookProfile));
             services.AddAutoMapper(typeof(BookProfile));
+            services.AddAutoMapper(typeof(AddingReadingSessionProfile));
+            services.AddAutoMapper(typeof(ReadingSessionProfile));
 
             services.AddControllers();
         }
