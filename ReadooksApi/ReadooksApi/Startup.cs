@@ -47,6 +47,7 @@ namespace ReadooksApi
             services.AddAutoMapper(typeof(UserRegistrationProfile));
             services.AddAutoMapper(typeof(AddingBookProfile));
             services.AddAutoMapper(typeof(BookProfile));
+            services.AddAutoMapper(typeof(UpdateBookProfile));
             services.AddAutoMapper(typeof(AddingReadingSessionProfile));
             services.AddAutoMapper(typeof(ReadingSessionProfile));
 

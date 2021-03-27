@@ -90,6 +90,7 @@ namespace Readooks.BusinessLogicLayer.Services
         {
             bool userExists = await unitOfWork.UserRepository.Exists(u => u.Id == bookDto.ReaderId);
             var book = await unitOfWork.BookRepository.GetAsync(bookId);
+           
             if (userExists && book != null)
             {
                 if (!book.Author.Equals(bookDto.Author) && bookDto.Author != null)
