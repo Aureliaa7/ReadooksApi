@@ -2,6 +2,8 @@
 using Readooks.BusinessLogicLayer.Services.Interfaces;
 using Readooks.BusinessLogicLayer.Dtos.Users;
 using System.Threading.Tasks;
+using System;
+using Readooks.BusinessLogicLayer.Exceptions;
 
 namespace ReadooksApi.Controllers
 {
@@ -35,6 +37,32 @@ namespace ReadooksApi.Controllers
                 return Ok(user);
             }
             return NotFound();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            try
+            {
+                return Ok(await accountService.GetByIdAsync(id));
+            }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPut("{id}/{noCoins}")]
+        public async Task<IActionResult> UpdateNoCoins(Guid id, int noCoins)
+        {
+            try
+            {
+                return Ok(await accountService.UpdateNoCoinsAsync(id, noCoins));
+            }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
         }
     }
 }
