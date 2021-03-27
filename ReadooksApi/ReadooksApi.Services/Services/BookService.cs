@@ -26,13 +26,15 @@ namespace Readooks.BusinessLogicLayer.Services
             bool userExists = await unitOfWork.UserRepository.Exists(u => u.Id == bookDto.ReaderId);
             if (userExists)
             {
+                var user = await unitOfWork.UserRepository.GetAsync(bookDto.ReaderId);
                 var book = mapper.Map<Book>(bookDto);
                 book.Id = Guid.NewGuid();
                 book.ReadingStartingDate = DateTime.Now;
                 book.Status = BookStatus.Open;
-
                 await unitOfWork.BookRepository.AddAsync(book);
 
+                user.AvailableSpotsOnBookshelf--;
+                await unitOfWork.UserRepository.UpdateAsync(user);
                 return mapper.Map<BookDto>(book);
             }
             throw new NotFoundException("The user was not found");
