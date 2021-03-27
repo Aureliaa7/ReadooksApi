@@ -75,6 +75,18 @@ namespace Readooks.BusinessLogicLayer.Services
             throw new NotFoundException("The user was not found");
         }
 
+        public async Task<IEnumerable<BookDto>> GetByStatusAsync(Guid readerId, int status)
+        {
+            bool userExists = await unitOfWork.UserRepository.Exists(u => u.Id == readerId);
+            if (userExists)
+            {
+                var books = await unitOfWork.BookRepository.GetByStatusAsync(readerId, status);
+                var bookDtos = MapBooksList(books);
+                return bookDtos;
+            }
+            throw new NotFoundException("The user was not found");
+        }
+
 
         private IEnumerable<BookDto> MapBooksList(IEnumerable<Book> books)
         {

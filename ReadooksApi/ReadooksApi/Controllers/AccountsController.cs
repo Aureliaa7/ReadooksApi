@@ -2,6 +2,8 @@
 using Readooks.BusinessLogicLayer.Services.Interfaces;
 using Readooks.BusinessLogicLayer.Dtos.Users;
 using System.Threading.Tasks;
+using System;
+using Readooks.BusinessLogicLayer.Exceptions;
 
 namespace ReadooksApi.Controllers
 {
@@ -35,6 +37,20 @@ namespace ReadooksApi.Controllers
                 return Ok(user);
             }
             return NotFound();
+        }
+
+        [HttpGet("info/{readerId}")]
+        public async Task<IActionResult> GetAccountInfo(Guid readerId)
+        {
+            try
+            {
+                var accountInfo = await accountService.GetInfo(readerId);
+                return Ok(accountInfo);
+            }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
         }
     }
 }

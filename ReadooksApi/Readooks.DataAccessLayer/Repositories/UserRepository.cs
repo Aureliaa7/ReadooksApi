@@ -2,6 +2,7 @@
 using Readooks.DataAccessLayer.DatabaseContext;
 using Readooks.DataAccessLayer.DomainEntities;
 using Readooks.DataAccessLayer.Repositories.Interfaces;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,6 +18,13 @@ namespace Readooks.DataAccessLayer.Repositories
         {
             return Context.Set<User>()
                 .Where(x => x.Email.Equals(email))
+                .FirstOrDefaultAsync();
+        }
+
+        public Task<User> GetByIdAsync(Guid userId)
+        {
+            return Context.Set<User>()
+                .Where(x => x.Id.Equals(userId))
                 .FirstOrDefaultAsync();
         }
     }

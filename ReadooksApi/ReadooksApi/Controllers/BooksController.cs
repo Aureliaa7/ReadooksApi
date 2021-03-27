@@ -58,6 +58,20 @@ namespace ReadooksApi.Controllers
             }
         }
 
+        [HttpGet("{id}/{status}")]
+        public async Task<IActionResult> GetByStatus(Guid id, int status)
+        {
+            try
+            {
+                var bookDtos = await bookService.GetByStatusAsync(id, status);
+                return Ok(bookDtos);
+            }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
         [HttpDelete("delete/{bookId}/{readerId}")]
         public async Task<IActionResult> Delete(Guid bookId, Guid readerId)
         {

@@ -5,6 +5,8 @@ using Readooks.DataAccessLayer.DomainEntities;
 using Readooks.DataAccessLayer.UnitOfWork;
 using System.Threading.Tasks;
 using AutoMapper;
+using System;
+using System.Linq;
 
 namespace Readooks.BusinessLogicLayer.Services
 {
@@ -39,7 +41,6 @@ namespace Readooks.BusinessLogicLayer.Services
 
         public async Task<UserDto> RegisterAsync(UserRegistrationDto userRegisterDto)
         {
-            // TODO: remove the password from the response :)
             User user = null;
             bool accountExists = await AccountExists(userRegisterDto.Email);
 
@@ -64,6 +65,21 @@ namespace Readooks.BusinessLogicLayer.Services
         {
             var accountExists = await unitOfWork.UserRepository.Exists(x => x.Email.Equals(email));
             return accountExists;
+        }
+
+        public async Task<UserInfoDto> GetInfo(Guid userId)
+        {
+            UserInfoDto info = new UserInfoDto();
+            var user = await unitOfWork.UserRepository.GetByIdAsync(userId);
+            if(user != null)
+            {
+                // map the user into the UserInfoDto
+                info = mapper.Map<UserInfoDto>(user);
+                info.NumberOfFinishedBooks = (await unitOfWork.BookRepository.GetByStatusAsync(userId, 1)).Count();
+                info.NumberOfOpenBooks = (await unitOfWork.BookRepository.GetByStatusAsync(userId, 0)).Count();
+            }
+            
+            return info;
         }
     }
 }
