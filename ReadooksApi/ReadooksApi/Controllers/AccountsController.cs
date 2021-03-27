@@ -64,5 +64,23 @@ namespace ReadooksApi.Controllers
                 return NotFound();
             }
         }
+
+        [HttpPut("buy-spot/{id}/{noCoins}")]
+        public async Task<IActionResult> BuySpotOnBookshelf(Guid id, int noCoins)
+        {
+            try
+            {
+                var userDto = await accountService.BuySpotOnBookshelfAsync(id, noCoins);
+                if (userDto != null)
+                {
+                    return Ok(userDto);
+                }
+                return BadRequest();
+            }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
+        }
     }
 }

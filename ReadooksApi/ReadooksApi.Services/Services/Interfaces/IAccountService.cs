@@ -10,5 +10,6 @@ namespace Readooks.BusinessLogicLayer.Services.Interfaces
         Task<UserDto> RegisterAsync(UserRegistrationDto userRegisterDto);
         Task<UserDto> GetByIdAsync(Guid id);
         Task<UserDto> UpdateNoCoinsAsync(Guid userId, int noCoins);
+        Task<UserDto> BuySpotOnBookshelfAsync(Guid id, int noCoins);
     }
 }

@@ -23,6 +23,24 @@ namespace Readooks.BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
+        public async Task<UserDto> BuySpotOnBookshelfAsync(Guid id, int noCoins)
+        {
+            bool userExists = await unitOfWork.UserRepository.Exists(u => u.Id == id);
+            if (userExists)
+            {
+                var user = await unitOfWork.UserRepository.GetAsync(id);
+                if(user.NumberOfCoins >= noCoins)
+                {
+                    user.NumberOfCoins -= noCoins;
+                    user.AvailableSpotsOnBookshelf++;
+                    await unitOfWork.UserRepository.UpdateAsync(user);
+                    return mapper.Map<UserDto>(user);
+                }
+                return null;
+            }
+            throw new NotFoundException("The user was not found");
+        }
+
         public async Task<UserDto> GetByIdAsync(Guid id)
         {
             bool userExists = await unitOfWork.UserRepository.Exists(u => u.Id == id);
