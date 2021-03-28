@@ -5,8 +5,10 @@ using Readooks.DataAccessLayer.DomainEntities;
 using Readooks.DataAccessLayer.UnitOfWork;
 using System.Threading.Tasks;
 using AutoMapper;
-using System;
+
 using System.Linq;
+using System;
+using Readooks.BusinessLogicLayer.Exceptions;
 
 namespace Readooks.BusinessLogicLayer.Services
 {
@@ -21,6 +23,35 @@ namespace Readooks.BusinessLogicLayer.Services
             this.unitOfWork = unitOfWork;
             this.passwordEncryptionService = passwordEncryptionService;
             this.mapper = mapper;
+        }
+
+        public async Task<UserDto> BuySpotOnBookshelfAsync(Guid id, int noCoins)
+        {
+            bool userExists = await unitOfWork.UserRepository.Exists(u => u.Id == id);
+            if (userExists)
+            {
+                var user = await unitOfWork.UserRepository.GetAsync(id);
+                if(user.NumberOfCoins >= noCoins)
+                {
+                    user.NumberOfCoins -= noCoins;
+                    user.AvailableSpotsOnBookshelf++;
+                    await unitOfWork.UserRepository.UpdateAsync(user);
+                    return mapper.Map<UserDto>(user);
+                }
+                return null;
+            }
+            throw new NotFoundException("The user was not found");
+        }
+
+        public async Task<UserDto> GetByIdAsync(Guid id)
+        {
+            bool userExists = await unitOfWork.UserRepository.Exists(u => u.Id == id);
+            if(userExists)
+            {
+                var user = await unitOfWork.UserRepository.GetAsync(id);
+                return mapper.Map<UserDto>(user);
+            }
+            throw new NotFoundException("The user was not found");
         }
 
         public async Task<UserDto> LoginAsync(UserLoginDto userLogin)
@@ -59,6 +90,19 @@ namespace Readooks.BusinessLogicLayer.Services
                 user = await unitOfWork.UserRepository.AddAsync(newUser);
             }
             return mapper.Map<UserDto>(user);
+        }
+
+        public async Task<UserDto> UpdateNoCoinsAsync(Guid userId, int noCoins)
+        {
+            bool userExists = await unitOfWork.UserRepository.Exists(u => u.Id == userId);
+            if (userExists)
+            {
+                var user = await unitOfWork.UserRepository.GetAsync(userId);
+                user.NumberOfCoins = noCoins;
+                var updatedUser = await unitOfWork.UserRepository.UpdateAsync(user);
+                return mapper.Map<UserDto>(updatedUser);
+            }
+            throw new NotFoundException("The user was not found");
         }
 
         private async Task<bool> AccountExists(string email)

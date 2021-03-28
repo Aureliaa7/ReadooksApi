@@ -52,5 +52,49 @@ namespace ReadooksApi.Controllers
                 return NotFound();
             }
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            try
+            {
+                return Ok(await accountService.GetByIdAsync(id));
+            }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPut("{id}/{noCoins}")]
+        public async Task<IActionResult> UpdateNoCoins(Guid id, int noCoins)
+        {
+            try
+            {
+                return Ok(await accountService.UpdateNoCoinsAsync(id, noCoins));
+            }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPut("buy-spot/{id}/{noCoins}")]
+        public async Task<IActionResult> BuySpotOnBookshelf(Guid id, int noCoins)
+        {
+            try
+            {
+                var userDto = await accountService.BuySpotOnBookshelfAsync(id, noCoins);
+                if (userDto != null)
+                {
+                    return Ok(userDto);
+                }
+                return BadRequest();
+            }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
+        }
     }
 }
