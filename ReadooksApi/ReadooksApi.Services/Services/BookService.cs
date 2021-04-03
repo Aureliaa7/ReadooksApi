@@ -102,10 +102,10 @@ namespace Readooks.BusinessLogicLayer.Services
             return bookDtos;
         }
 
-        public async Task<BookDto> UpdateAsync(Guid bookId, UpdateBookDto bookDto)
+        public async Task<BookDto> UpdateAsync(UpdateBookDto bookDto)
         {
             bool userExists = await unitOfWork.UserRepository.Exists(u => u.Id == bookDto.ReaderId);
-            var book = await unitOfWork.BookRepository.GetAsync(bookId);
+            var book = await unitOfWork.BookRepository.GetAsync(bookDto.Id);
            
             if (userExists && book != null)
             {
@@ -129,13 +129,6 @@ namespace Readooks.BusinessLogicLayer.Services
                 {
                     book.ReaderId = bookDto.ReaderId;
                 }
-                if (!book.Title.Equals(bookDto.Title) && bookDto.Title != null)
-                {
-                    book.Title = bookDto.Title;
-                }
-
-                book.Status = bookDto.IsOpen ? BookStatus.Open : BookStatus.Finished;
-
 
                 await unitOfWork.BookRepository.UpdateAsync(book);
 
