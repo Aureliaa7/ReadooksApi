@@ -3,6 +3,7 @@
     public enum BookStatus
     {
         Open,
-        Finished
+        Finished, 
+        Canceled
     }
 }

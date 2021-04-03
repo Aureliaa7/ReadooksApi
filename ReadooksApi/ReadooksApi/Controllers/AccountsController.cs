@@ -79,6 +79,7 @@ namespace ReadooksApi.Controllers
             }
         }
 
+
         [HttpPut("buy-spot/{id}/{noCoins}")]
         public async Task<IActionResult> BuySpotOnBookshelf(Guid id, int noCoins)
         {
@@ -90,6 +91,19 @@ namespace ReadooksApi.Controllers
                     return Ok(userDto);
                 }
                 return BadRequest();
+            }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPut("free-spot/{id}/{noOfSpotsOnBookshelf}")]
+        public async Task<IActionResult> FreeSpotOnBookshelf(Guid id, int noOfSpotsOnBookshelf)
+        {
+            try
+            {
+                return Ok(await accountService.UpdateNoSpotsOnBookshelfAsync(id, noOfSpotsOnBookshelf));
             }
             catch (NotFoundException)
             {

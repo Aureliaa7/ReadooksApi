@@ -125,5 +125,22 @@ namespace Readooks.BusinessLogicLayer.Services
             
             return info;
         }
+
+        public async Task<UserDto> UpdateNoSpotsOnBookshelfAsync(Guid id, int noOfSpotsOnBookshelf)
+        {
+            bool userExists = await unitOfWork.UserRepository.Exists(u => u.Id == id);
+            if (userExists)
+            {
+                var user = await unitOfWork.UserRepository.GetAsync(id);
+                if (user.AvailableSpotsOnBookshelf != noOfSpotsOnBookshelf)
+                {
+                    user.NumberOfCoins = noOfSpotsOnBookshelf;
+                    await unitOfWork.UserRepository.UpdateAsync(user);
+                    return mapper.Map<UserDto>(user);
+                }
+                return null;
+            }
+            throw new NotFoundException("The user was not found");
+        }
     }
 }
