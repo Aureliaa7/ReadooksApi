@@ -8,7 +8,7 @@ namespace Readooks.BusinessLogicLayer.Services.Interfaces
     public interface IBookService
     {
         Task<BookDto> AddAsync(AddingBookDto bookDto);
-        Task<BookDto> GetByIdAsync(Guid id);
+        Task<BookDto> GetAsync(Guid readerId, Guid bookId);
         Task<IEnumerable<BookDto>> GetByReaderIdAsync(Guid readerId);
         Task DeleteAsync(Guid bookId, Guid readerId);
         Task<BookDto> UpdateAsync(Guid bookId, UpdateBookDto bookDto);

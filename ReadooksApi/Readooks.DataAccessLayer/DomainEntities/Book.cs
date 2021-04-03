@@ -25,10 +25,13 @@ namespace Readooks.DataAccessLayer.DomainEntities
         public virtual User Reader { get; set; }
         
         [Required]
-        public DateTime ReadingStartingDate { get; set; }
+        public string ReadingStartingDate { get; set; }
         
         public int DailyReadingGoal { get; set; }
         
         public BookStatus Status { get; set; }
+
+        [Required]
+        public int NumberOfReadPages { get; set; }
     }
 }

@@ -30,15 +30,15 @@ namespace ReadooksApi.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id)
+        [HttpGet("details/{readerId}/{bookId}")]
+        public async Task<IActionResult> Get(Guid readerId, Guid bookId)
         {
             try
             {
-                var bookDto = await bookService.GetByIdAsync(id);
+                var bookDto = await bookService.GetAsync(readerId, bookId);
                 return Ok(bookDto);
             }
-            catch(NotFoundException)
+            catch (NotFoundException)
             {
                 return NotFound();
             }
@@ -97,8 +97,7 @@ namespace ReadooksApi.Controllers
             catch (NotFoundException)
             {
                 return NotFound();
-            }
-            
+            }         
         }
     }
 }

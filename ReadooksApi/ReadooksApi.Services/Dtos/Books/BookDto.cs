@@ -11,7 +11,8 @@ namespace Readooks.BusinessLogicLayer.Dtos.Books
         public string Author { get; set; }
         public int NumberOfPages { get; set; }
         public int DailyReadingGoal { get; set; }
-        public DateTime ReadingStartingDate { get; set; }
+        public string ReadingStartingDate { get; set; }
         public BookStatus Status { get; set; }
+        public int NumberOfReadPages { get; set; }
     }
 }

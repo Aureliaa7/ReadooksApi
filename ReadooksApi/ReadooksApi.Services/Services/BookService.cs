@@ -29,8 +29,9 @@ namespace Readooks.BusinessLogicLayer.Services
                 var user = await unitOfWork.UserRepository.GetAsync(bookDto.ReaderId);
                 var book = mapper.Map<Book>(bookDto);
                 book.Id = Guid.NewGuid();
-                book.ReadingStartingDate = DateTime.Now;
+                book.ReadingStartingDate = DateTime.Now.ToString("MM/dd/yyyy hh:mm tt");
                 book.Status = BookStatus.Open;
+                book.NumberOfReadPages = 0;
                 await unitOfWork.BookRepository.AddAsync(book);
 
                 user.AvailableSpotsOnBookshelf--;
@@ -54,12 +55,13 @@ namespace Readooks.BusinessLogicLayer.Services
             }
         }
 
-        public async Task<BookDto> GetByIdAsync(Guid id)
+        public async Task<BookDto> GetAsync(Guid readerId, Guid bookId)
         {
-            bool bookExists = await unitOfWork.BookRepository.Exists(b => b.Id == id);
-            if (bookExists)
+            bool userExists = await unitOfWork.UserRepository.Exists(u => u.Id == readerId);
+            bool bookExists = await unitOfWork.BookRepository.Exists(b => b.Id == bookId && b.ReaderId == readerId);
+            if (userExists && bookExists)
             {
-                var book = await unitOfWork.BookRepository.GetAsync(id);
+                var book = await unitOfWork.BookRepository.GetAsync(bookId);
                 return mapper.Map<BookDto>(book);
             }
             throw new NotFoundException("The book does not exist");

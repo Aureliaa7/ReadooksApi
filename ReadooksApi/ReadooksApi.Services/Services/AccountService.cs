@@ -34,7 +34,6 @@ namespace Readooks.BusinessLogicLayer.Services
                 if(user.NumberOfCoins >= noCoins)
                 {
                     user.NumberOfCoins -= noCoins;
-                    user.AvailableSpotsOnBookshelf++;
                     await unitOfWork.UserRepository.UpdateAsync(user);
                     return mapper.Map<UserDto>(user);
                 }
