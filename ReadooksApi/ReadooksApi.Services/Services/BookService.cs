@@ -129,7 +129,10 @@ namespace Readooks.BusinessLogicLayer.Services
                 {
                     book.ReaderId = bookDto.ReaderId;
                 }
-
+                if(book.Status != bookDto.Status && bookDto != null)
+                {
+                    book.Status = bookDto.Status;
+                }
                 await unitOfWork.BookRepository.UpdateAsync(book);
 
                 return mapper.Map<BookDto>(book);

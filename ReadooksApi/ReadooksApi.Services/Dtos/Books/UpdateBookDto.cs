@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Readooks.DataAccessLayer.DomainEntities;
+using System;
 
 namespace Readooks.BusinessLogicLayer.Dtos.Books
 {
@@ -10,5 +11,6 @@ namespace Readooks.BusinessLogicLayer.Dtos.Books
         public int NumberOfPages { get; set; }
         public int DailyReadingGoal { get; set; }
         public Guid ReaderId { get; set; }
+        public BookStatus Status { get; set; }
     }
 }
