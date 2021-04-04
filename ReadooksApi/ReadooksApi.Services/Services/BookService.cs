@@ -33,7 +33,6 @@ namespace Readooks.BusinessLogicLayer.Services
                 book.Status = BookStatus.Open;
                 book.NumberOfReadPages = 0;
                 await unitOfWork.BookRepository.AddAsync(book);
-
                 user.AvailableSpotsOnBookshelf--;
                 await unitOfWork.UserRepository.UpdateAsync(user);
                 return mapper.Map<BookDto>(book);

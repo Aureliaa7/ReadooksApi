@@ -33,6 +33,7 @@ namespace Readooks.BusinessLogicLayer.Services
                 var user = await unitOfWork.UserRepository.GetAsync(id);
                 if(user.NumberOfCoins >= noCoins)
                 {
+                    user.AvailableSpotsOnBookshelf++;
                     user.NumberOfCoins -= noCoins;
                     await unitOfWork.UserRepository.UpdateAsync(user);
                     return mapper.Map<UserDto>(user);
