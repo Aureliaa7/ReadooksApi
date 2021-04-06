@@ -24,9 +24,19 @@ namespace Readooks.DataAccessLayer.Repositories
 
         public async Task<IEnumerable<Book>> GetByStatusAsync(Guid readerId, int status)
         {
-            return await Context.Set<Book>()
-               .Where(x => x.Reader.Id == readerId && x.Status == (status == 0 ? BookStatus.Open : BookStatus.Finished))
-               .ToListAsync();
+            if(status == 0)
+            {
+                return await Context.Set<Book>()
+                              .Where(x => x.Reader.Id == readerId && x.Status == BookStatus.Open)
+                              .ToListAsync();
+            }
+            else
+            {
+                return await Context.Set<Book>()
+                              .Where(x => x.Reader.Id == readerId && x.Status == BookStatus.Canceled || x.Status == BookStatus.Finished)
+                              .ToListAsync();
+            }
+           
         }
     }
 }
