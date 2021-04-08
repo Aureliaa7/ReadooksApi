@@ -1,5 +1,4 @@
 ﻿using Readooks.DataAccessLayer.DatabaseContext;
-using Readooks.DataAccessLayer.DomainEntities;
 using Readooks.DataAccessLayer.Repositories;
 using Readooks.DataAccessLayer.Repositories.Interfaces;
 

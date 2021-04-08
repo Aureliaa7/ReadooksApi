@@ -6,6 +6,7 @@ using Readooks.DataAccessLayer.DomainEntities;
 using Readooks.DataAccessLayer.UnitOfWork;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Readooks.BusinessLogicLayer.Services
@@ -23,39 +24,80 @@ namespace Readooks.BusinessLogicLayer.Services
 
         public async Task<ReadingSessionDto> AddAsync(AddingReadingSessionDto readingSessionDto)
         {
-            bool bookExists = await unitOfWork.BookRepository.Exists(b => b.Id.Equals(readingSessionDto.BookId));
-            if (bookExists)
+            bool bookExists = (await unitOfWork.BookRepository.GetByReaderIdAsync(readingSessionDto.ReaderId))
+                              .Where(b => b.Id == readingSessionDto.BookId).Any();
+            bool userExists = await unitOfWork.UserRepository.Exists(u => u.Id == readingSessionDto.ReaderId);
+
+            if (bookExists && userExists)
             {
-                var readingSession = mapper.Map<ReadingSession>(readingSessionDto);
-                readingSession.Id = Guid.NewGuid();
+                var book = await unitOfWork.BookRepository.GetAsync(readingSessionDto.BookId);
+                if (book.Status == BookStatus.Open)
+                {
+                    var user = await unitOfWork.UserRepository.GetAsync(readingSessionDto.ReaderId);
 
-                await unitOfWork.ReadingSessionRepository.AddAsync(readingSession);
+                    int noReadPagesToday = await GetNoReadPagesForToday(book.Id);
+                    int totalNoReadPagesToday = noReadPagesToday + readingSessionDto.NumberOfPages;
 
-                return mapper.Map<ReadingSessionDto>(readingSession);
+                    if (noReadPagesToday >= book.DailyReadingGoal && totalNoReadPagesToday >= book.DailyReadingGoal
+                        || totalNoReadPagesToday < book.DailyReadingGoal)
+                    {
+                        book.NumberOfReadPages += readingSessionDto.NumberOfPages;
+                    }
+                    else if(noReadPagesToday < book.DailyReadingGoal && totalNoReadPagesToday >= book.DailyReadingGoal)
+                    {
+                        book.NumberOfReadPages += readingSessionDto.NumberOfPages;
+                        user.NumberOfCoins += Constants.NoCoinsForAchievingDailyReadingGoal;
+                    }
+                    else if (totalNoReadPagesToday == book.DailyReadingGoal)
+                    {
+                        book.NumberOfReadPages += readingSessionDto.NumberOfPages;
+                        user.NumberOfCoins += Constants.NoCoinsForAchievingDailyReadingGoal;
+                    }
+
+                    if (book.NumberOfReadPages >= book.NumberOfPages)
+                    {
+                        book.Status = BookStatus.Finished;
+                        book.NumberOfReadPages = book.NumberOfPages;
+                        user.NumberOfCoins += Constants.NoCoinsForFinishingBook;
+                        user.AvailableSpotsOnBookshelf++;
+                    }
+                    await unitOfWork.BookRepository.UpdateAsync(book);
+                    await unitOfWork.UserRepository.UpdateAsync(user);
+
+                    var readingSession = mapper.Map<ReadingSession>(readingSessionDto);
+                    readingSession.Id = Guid.NewGuid();
+                    readingSession.Date = DateTime.Now;
+
+                    await unitOfWork.ReadingSessionRepository.AddAsync(readingSession);
+
+                    return mapper.Map<ReadingSessionDto>(readingSession);
+                }
+                throw new Exception("The book is not open!");
             }
-            throw new NotFoundException("The book does not exist");
+            throw new NotFoundException("Not found");
         }
 
-        public async Task<IEnumerable<ReadingSessionDto>> GetByBookIdAsync(Guid bookId)
+        private async Task<int> GetNoReadPagesForToday(Guid bookId)
         {
-            bool bookExists = await unitOfWork.BookRepository.Exists(b => b.Id == bookId);
-            if (bookExists)
+            var book = await unitOfWork.BookRepository.GetAsync(bookId);
+            var todayDate = DateTime.Now;
+            var readingSessions = await unitOfWork.ReadingSessionRepository.GetByBookIdAsync(book.Id);
+            int noReadPagesToday = 0;
+            var todayReadingSessions = new List<ReadingSession>();
+            
+            foreach(var rs in readingSessions)
             {
-                var readingSessions = await unitOfWork.ReadingSessionRepository.GetByBookIdAsync(bookId);
-                var bookDtos = MapReadingSessionsList(readingSessions);
-                return bookDtos;
-            }
-            throw new NotFoundException("The user was not found");
-        }
-
-        private IEnumerable<ReadingSessionDto> MapReadingSessionsList(IEnumerable<ReadingSession> sessions)
-        {
-            var sessionDtos = new List<ReadingSessionDto>();
-            foreach (var session in sessions)
+                if(rs.Date.Date == todayDate.Date)
+                {
+                    todayReadingSessions.Add(rs);
+                }
+            }  
+            
+            foreach (var rs in todayReadingSessions)
             {
-                sessionDtos.Add(mapper.Map<ReadingSessionDto>(session));
+                noReadPagesToday += rs.NumberOfPages;
             }
-            return sessionDtos;
-        }
+            return noReadPagesToday;
+        } 
     }
 }

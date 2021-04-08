@@ -7,11 +7,11 @@ using Readooks.BusinessLogicLayer.Services.Interfaces;
 
 namespace ReadooksApi.Controllers
 {
-    public class ReadingSessionController : ReadooksController
+    public class ReadingSessionsController : ReadooksController
     {
         private readonly IReadingSessionService readingSessionService;
 
-        public ReadingSessionController(IReadingSessionService readingSessionService)
+        public ReadingSessionsController(IReadingSessionService readingSessionService)
         {
             this.readingSessionService = readingSessionService;
         }
@@ -23,20 +23,6 @@ namespace ReadooksApi.Controllers
             {
                 var addedSession = await readingSessionService.AddAsync(readingSession);
                 return Ok(addedSession);
-            }
-            catch (NotFoundException)
-            {
-                return NotFound();
-            }
-        }
-
-        [HttpGet("book/{id}")]
-        public async Task<IActionResult> GetByBookId(Guid id)
-        {
-            try
-            {
-                var readingSessionDtos = await readingSessionService.GetByBookIdAsync(id);
-                return Ok(readingSessionDtos);
             }
             catch (NotFoundException)
             {

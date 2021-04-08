@@ -14,5 +14,8 @@ namespace Readooks.DataAccessLayer.DomainEntities
         
         [Required]
         public int NumberOfPages { get; set; }
+
+        [Required]
+        public DateTime Date { get; set; }
     }
 }
