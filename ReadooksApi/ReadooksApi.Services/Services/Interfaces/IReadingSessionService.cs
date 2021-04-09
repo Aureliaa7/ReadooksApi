@@ -1,10 +1,11 @@
 ﻿using Readooks.BusinessLogicLayer.Dtos.ReadingSessions;
+using Readooks.BusinessLogicLayer.Helpers;
 using System.Threading.Tasks;
 
 namespace Readooks.BusinessLogicLayer.Services.Interfaces
 {
     public interface IReadingSessionService
     {
-        public Task<ReadingSessionDto> AddAsync(AddingReadingSessionDto readingSessionDto);
+        public Task<AddingReadingSessionResponse> AddAsync(AddingReadingSessionDto readingSessionDto);
     }
 }

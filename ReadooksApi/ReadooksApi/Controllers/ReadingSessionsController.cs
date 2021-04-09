@@ -21,8 +21,8 @@ namespace ReadooksApi.Controllers
         {
             try
             {
-                var addedSession = await readingSessionService.AddAsync(readingSession);
-                return Ok(addedSession);
+                var status = await readingSessionService.AddAsync(readingSession);
+                return Ok(status);
             }
             catch (NotFoundException)
             {

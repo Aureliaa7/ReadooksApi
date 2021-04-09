@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Readooks.BusinessLogicLayer.Dtos.ReadingSessions;
 using Readooks.BusinessLogicLayer.Exceptions;
+using Readooks.BusinessLogicLayer.Helpers;
 using Readooks.BusinessLogicLayer.Services.Interfaces;
 using Readooks.DataAccessLayer.DomainEntities;
 using Readooks.DataAccessLayer.UnitOfWork;
@@ -22,7 +23,7 @@ namespace Readooks.BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
-        public async Task<ReadingSessionDto> AddAsync(AddingReadingSessionDto readingSessionDto)
+        public async Task<AddingReadingSessionResponse> AddAsync(AddingReadingSessionDto readingSessionDto)
         {
             bool bookExists = (await unitOfWork.BookRepository.GetByReaderIdAsync(readingSessionDto.ReaderId))
                               .Where(b => b.Id == readingSessionDto.BookId).Any();
@@ -30,7 +31,9 @@ namespace Readooks.BusinessLogicLayer.Services
 
             if (bookExists && userExists)
             {
+                var addingReadingSessionResponse = new AddingReadingSessionResponse {Response = ReadingSessionResponse.None };
                 var book = await unitOfWork.BookRepository.GetAsync(readingSessionDto.BookId);
+                bool hasReachedDailyGoal = false;
                 if (book.Status == BookStatus.Open)
                 {
                     var user = await unitOfWork.UserRepository.GetAsync(readingSessionDto.ReaderId);
@@ -43,15 +46,13 @@ namespace Readooks.BusinessLogicLayer.Services
                     {
                         book.NumberOfReadPages += readingSessionDto.NumberOfPages;
                     }
-                    else if(noReadPagesToday < book.DailyReadingGoal && totalNoReadPagesToday >= book.DailyReadingGoal)
+                    else if(noReadPagesToday < book.DailyReadingGoal && totalNoReadPagesToday >= book.DailyReadingGoal
+                        || totalNoReadPagesToday == book.DailyReadingGoal)
                     {
                         book.NumberOfReadPages += readingSessionDto.NumberOfPages;
                         user.NumberOfCoins += Constants.NoCoinsForAchievingDailyReadingGoal;
-                    }
-                    else if (totalNoReadPagesToday == book.DailyReadingGoal)
-                    {
-                        book.NumberOfReadPages += readingSessionDto.NumberOfPages;
-                        user.NumberOfCoins += Constants.NoCoinsForAchievingDailyReadingGoal;
+                        addingReadingSessionResponse.Response = ReadingSessionResponse.ReachedDailyReadingGoal;
+                        hasReachedDailyGoal = true;
                     }
 
                     if (book.NumberOfReadPages >= book.NumberOfPages)
@@ -60,6 +61,8 @@ namespace Readooks.BusinessLogicLayer.Services
                         book.NumberOfReadPages = book.NumberOfPages;
                         user.NumberOfCoins += Constants.NoCoinsForFinishingBook;
                         user.AvailableSpotsOnBookshelf++;
+                        addingReadingSessionResponse.Response = hasReachedDailyGoal ? 
+                            ReadingSessionResponse.ReachedGoalAndFinishedBook : ReadingSessionResponse.FinishedBook;
                     }
                     await unitOfWork.BookRepository.UpdateAsync(book);
                     await unitOfWork.UserRepository.UpdateAsync(user);
@@ -70,7 +73,7 @@ namespace Readooks.BusinessLogicLayer.Services
 
                     await unitOfWork.ReadingSessionRepository.AddAsync(readingSession);
 
-                    return mapper.Map<ReadingSessionDto>(readingSession);
+                    return addingReadingSessionResponse;
                 }
                 throw new Exception("The book is not open!");
             }
