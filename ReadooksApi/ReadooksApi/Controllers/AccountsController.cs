@@ -103,7 +103,12 @@ namespace ReadooksApi.Controllers
         {
             try
             {
-                return Ok(await accountService.UpdateNoSpotsOnBookshelfAsync(id, noOfSpotsOnBookshelf));
+                var userDto = await accountService.UpdateNoSpotsOnBookshelfAsync(id, noOfSpotsOnBookshelf);
+                if (userDto != null)
+                {
+                    return Ok(userDto);
+                }
+                return BadRequest();
             }
             catch (NotFoundException)
             {

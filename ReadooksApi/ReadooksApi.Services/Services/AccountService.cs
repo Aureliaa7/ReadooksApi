@@ -118,8 +118,8 @@ namespace Readooks.BusinessLogicLayer.Services
             {
                 // map the user into the UserInfoDto
                 info = mapper.Map<UserInfoDto>(user);
-                info.NumberOfFinishedBooks = (await unitOfWork.BookRepository.GetByStatusAsync(userId, 1)).Count();
-                info.NumberOfOpenBooks = (await unitOfWork.BookRepository.GetByStatusAsync(userId, 0)).Count();
+                info.NumberOfFinishedBooks = (await unitOfWork.BookRepository.GetByStatusAsync(userId, BookStatus.Finished)).Count();
+                info.NumberOfOpenBooks = (await unitOfWork.BookRepository.GetByStatusAsync(userId, BookStatus.Open)).Count();
             }
             
             return info;
