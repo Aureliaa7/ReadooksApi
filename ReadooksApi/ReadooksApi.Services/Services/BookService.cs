@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Readooks.BusinessLogicLayer.Dtos.Books;
 using Readooks.BusinessLogicLayer.Exceptions;
+using Readooks.BusinessLogicLayer.Services.Helpers;
 using Readooks.BusinessLogicLayer.Services.Interfaces;
 using Readooks.DataAccessLayer.DomainEntities;
 using Readooks.DataAccessLayer.UnitOfWork;
@@ -83,7 +84,9 @@ namespace Readooks.BusinessLogicLayer.Services
             bool userExists = await unitOfWork.UserRepository.Exists(u => u.Id == readerId);
             if (userExists)
             {
-                var books = await unitOfWork.BookRepository.GetByStatusAsync(readerId, status);
+                BookStatusMapper mapper = BookStatusMapper.GetInstance();
+                BookStatus bookStatus = mapper.Map(status);
+                var books = await unitOfWork.BookRepository.GetByStatusAsync(readerId, bookStatus);
                 var bookDtos = MapBooksList(books);
                 return bookDtos;
             }

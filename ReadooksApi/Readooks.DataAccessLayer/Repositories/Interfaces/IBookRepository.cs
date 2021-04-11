@@ -8,6 +8,7 @@ namespace Readooks.DataAccessLayer.Repositories.Interfaces
     public interface IBookRepository : IRepository<Book>
     {
         Task<IEnumerable<Book>> GetByReaderIdAsync(Guid readerId);
-        Task<IEnumerable<Book>> GetByStatusAsync(Guid readerId, int status);
+        Task<IEnumerable<Book>> GetByStatusAsync(Guid readerId, BookStatus status);
+
     }
 }
