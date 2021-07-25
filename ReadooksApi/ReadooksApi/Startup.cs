@@ -51,6 +51,18 @@ namespace ReadooksApi
             services.AddAutoMapper(typeof(ReadingSessionProfile));
 
             services.AddControllers();
+
+            //configure the server to receive cross-origin requests because by default,
+            //the application will reject any request coming from the cross-origin clients
+            services.AddCors(options =>
+            {
+                options.AddPolicy("EnableCORS", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                       .AllowAnyHeader()
+                       .AllowAnyMethod();
+                });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -63,6 +75,8 @@ namespace ReadooksApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("EnableCORS");
 
             app.UseAuthorization();
 
